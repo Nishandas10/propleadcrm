@@ -179,6 +179,56 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 </Link>
               ))}
             </nav>
+
+            {/* Mobile Waitlist CTA */}
+            <div className="px-3 py-2">
+              <Button 
+                onClick={() => setShowWaitlistModal(true)}
+                className="w-full bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-md"
+              >
+                <Gift className="mr-2 h-4 w-4" />
+                Join Waitlist - 70% OFF
+              </Button>
+            </div>
+
+            {/* Mobile User Section */}
+            <div className="mt-auto p-4 border-t">
+              {isGuest && (
+                <div className="mb-3 p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-xs text-yellow-800 font-medium">Guest Mode</p>
+                  <p className="text-xs text-yellow-600">Data will not be saved</p>
+                </div>
+              )}
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-start gap-2 h-auto p-2">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback>{user ? getInitials(user.name) : 'U'}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 text-left">
+                      <p className="text-sm font-medium truncate">{user?.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                    </div>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/settings">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    {isGuest ? 'Exit Guest Mode' : 'Sign Out'}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </SheetContent>
         </Sheet>
         

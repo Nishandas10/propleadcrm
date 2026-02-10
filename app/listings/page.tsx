@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import { useAuth } from '@/lib/auth-context';
 import { DUMMY_LISTINGS } from '@/lib/dummy-data';
@@ -36,7 +37,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import {
   Building2,
-  Home,
   MapPin,
   Bed,
   Bath,
@@ -281,20 +281,16 @@ export default function ListingsPage() {
           </Card>
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredListings.map((listing) => (
+            {filteredListings.map((listing, index) => (
               <Card key={listing.id} className="overflow-hidden group">
                 {/* Image Section */}
                 <div className="relative aspect-video bg-gray-100">
-                  {listing.photos.length > 0 ? (
-                    <div className="w-full h-full bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                      <Home className="h-12 w-12 text-gray-400" />
-                    </div>
-                  ) : (
-                    <div className="w-full h-full bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                      <ImageIcon className="h-12 w-12 text-gray-400" />
-                      <span className="sr-only">No image</span>
-                    </div>
-                  )}
+                  <Image
+                    src={`/properties/${(index % 4) + 1}${index % 4 === 2 ? '.' : ''}.png`}
+                    alt={listing.title}
+                    fill
+                    className="object-cover"
+                  />
                   
                   {/* Status Badge */}
                   <Badge className={`absolute top-3 left-3 ${STATUS_COLORS[listing.status]}`}>
@@ -437,8 +433,13 @@ export default function ListingsPage() {
                     className={`flex items-center gap-4 p-4 ${index > 0 ? 'border-t' : ''}`}
                   >
                     {/* Thumbnail */}
-                    <div className="w-24 h-16 bg-gray-100 rounded flex items-center justify-center shrink-0">
-                      <Home className="h-6 w-6 text-gray-400" />
+                    <div className="w-24 h-16 bg-gray-100 rounded overflow-hidden relative shrink-0">
+                      <Image
+                        src={`/properties/${(index % 4) + 1}${index % 4 === 2 ? '.' : ''}.png`}
+                        alt={listing.title}
+                        fill
+                        className="object-cover"
+                      />
                     </div>
 
                     {/* Info */}

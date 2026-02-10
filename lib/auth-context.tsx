@@ -54,6 +54,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isGuest, setIsGuest] = useState(false);
 
+  // Check for persisted guest mode on mount
+  useEffect(() => {
+    const persistedGuestMode = localStorage.getItem('proplead_guest_mode');
+    if (persistedGuestMode === 'true') {
+      setIsGuest(true);
+      setUser(createGuestUser());
+      setLoading(false);
+    }
+  }, []);
+
   // Listen to auth state changes
   useEffect(() => {
     // If Firebase is not configured, auto-enter guest mode
@@ -155,6 +165,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       setUser(null);
       setIsGuest(false);
+      localStorage.removeItem('proplead_guest_mode');
     } finally {
       setLoading(false);
     }
@@ -180,11 +191,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsGuest(true);
     setUser(createGuestUser());
     setLoading(false);
+    localStorage.setItem('proplead_guest_mode', 'true');
   };
 
   const exitGuestMode = () => {
     setIsGuest(false);
     setUser(null);
+    localStorage.removeItem('proplead_guest_mode');
   };
 
   const value = useMemo(() => ({
