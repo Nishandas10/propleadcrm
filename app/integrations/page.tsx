@@ -51,6 +51,8 @@ import {
   Unlink,
   Play,
   MoreVertical,
+  Building2,
+  Home,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -63,9 +65,9 @@ import { toast } from 'sonner';
 
 export default function IntegrationsPage() {
   const { isGuest } = useAuth();
-  const [activeTab, setActiveTab] = useState<'integrations' | 'campaigns'>('integrations');
+  const [activeTab, setActiveTab] = useState<'lead_ads' | 'property_portals' | 'campaigns'>('lead_ads');
   const [showConnectDialog, setShowConnectDialog] = useState(false);
-  const [selectedPlatform, setSelectedPlatform] = useState<'facebook' | 'instagram' | 'google' | null>(null);
+  const [selectedPlatform, setSelectedPlatform] = useState<'facebook' | 'instagram' | 'google' | 'magicbricks' | '99acres' | 'housing' | null>(null);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_selectedIntegration, setSelectedIntegration] = useState<string | null>(null);
@@ -90,6 +92,12 @@ export default function IntegrationsPage() {
         return <Facebook className="h-5 w-5 text-blue-600" />;
       case 'instagram':
         return <Instagram className="h-5 w-5 text-pink-600" />;
+      case 'magicbricks':
+        return <span className="text-lg">🧱</span>;
+      case '99acres':
+        return <span className="text-lg">🏘️</span>;
+      case 'housing':
+        return <Home className="h-5 w-5 text-orange-500" />;
       case 'google':
         return (
           <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -119,7 +127,7 @@ export default function IntegrationsPage() {
     }
   };
 
-  const handleConnect = (platform: 'facebook' | 'instagram' | 'google') => {
+  const handleConnect = (platform: 'facebook' | 'instagram' | 'google' | 'magicbricks' | '99acres' | 'housing') => {
     setSelectedPlatform(platform);
     setShowConnectDialog(true);
   };
@@ -212,9 +220,13 @@ export default function IntegrationsPage() {
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
           <TabsList>
-            <TabsTrigger value="integrations" className="gap-2">
-              <Link2 className="h-4 w-4" />
-              Connected Platforms
+            <TabsTrigger value="lead_ads" className="gap-2">
+              <Facebook className="h-4 w-4" />
+              Lead Ads
+            </TabsTrigger>
+            <TabsTrigger value="property_portals" className="gap-2">
+              <Building2 className="h-4 w-4" />
+              Property Portals
             </TabsTrigger>
             <TabsTrigger value="campaigns" className="gap-2">
               <TrendingUp className="h-4 w-4" />
@@ -222,8 +234,8 @@ export default function IntegrationsPage() {
             </TabsTrigger>
           </TabsList>
 
-          {/* Integrations Tab */}
-          <TabsContent value="integrations" className="space-y-6">
+          {/* Lead Ads Tab */}
+          <TabsContent value="lead_ads" className="space-y-6">
             {/* Platform Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Facebook */}
@@ -473,6 +485,154 @@ export default function IntegrationsPage() {
                     ))}
                   </TableBody>
                 </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Property Portals Tab */}
+          <TabsContent value="property_portals" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* MagicBricks */}
+              <Card className="relative overflow-hidden">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 bg-red-100 rounded-full flex items-center justify-center text-lg">
+                        🧱
+                      </div>
+                      <div>
+                        <CardTitle className="text-base">MagicBricks</CardTitle>
+                        <CardDescription>Auto-import leads from MagicBricks</CardDescription>
+                      </div>
+                    </div>
+                    <CheckCircle className="h-5 w-5 text-green-500" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Leads imported</span>
+                      <span className="font-medium">89</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Last sync</span>
+                      <span className="font-medium">2 hours ago</span>
+                    </div>
+                    <div className="flex gap-2 pt-2">
+                      <Button size="sm" variant="outline" className="flex-1">
+                        <Settings className="mr-1 h-3 w-3" />
+                        Settings
+                      </Button>
+                      <Button size="sm" variant="outline">
+                        <RefreshCw className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* 99acres */}
+              <Card className="relative overflow-hidden">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 bg-green-100 rounded-full flex items-center justify-center text-lg">
+                        🏘️
+                      </div>
+                      <div>
+                        <CardTitle className="text-base">99acres</CardTitle>
+                        <CardDescription>Auto-import leads from 99acres</CardDescription>
+                      </div>
+                    </div>
+                    <CheckCircle className="h-5 w-5 text-green-500" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Leads imported</span>
+                      <span className="font-medium">124</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Last sync</span>
+                      <span className="font-medium">30 mins ago</span>
+                    </div>
+                    <div className="flex gap-2 pt-2">
+                      <Button size="sm" variant="outline" className="flex-1">
+                        <Settings className="mr-1 h-3 w-3" />
+                        Settings
+                      </Button>
+                      <Button size="sm" variant="outline">
+                        <RefreshCw className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Housing.com */}
+              <Card className="relative overflow-hidden">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 bg-orange-100 rounded-full flex items-center justify-center">
+                        <Home className="h-5 w-5 text-orange-600" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-base">Housing.com</CardTitle>
+                        <CardDescription>Auto-import leads from Housing</CardDescription>
+                      </div>
+                    </div>
+                    <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Connect your Housing.com account to automatically import leads and sync listings.
+                  </p>
+                  <Button className="w-full" onClick={() => handleConnect('housing')}>
+                    Connect Housing.com
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Portal Integration Info */}
+            <Card>
+              <CardHeader>
+                <CardTitle>How Property Portal Integration Works</CardTitle>
+                <CardDescription>Automatically sync leads from major Indian property portals</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="text-center p-4">
+                    <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Link2 className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <h3 className="font-medium mb-2">1. Connect Account</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Link your property portal account using API credentials or email forwarding
+                    </p>
+                  </div>
+                  <div className="text-center p-4">
+                    <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <RefreshCw className="h-6 w-6 text-green-600" />
+                    </div>
+                    <h3 className="font-medium mb-2">2. Auto-Sync Leads</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Leads are automatically imported every 15 minutes with full details
+                    </p>
+                  </div>
+                  <div className="text-center p-4">
+                    <div className="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Zap className="h-6 w-6 text-purple-600" />
+                    </div>
+                    <h3 className="font-medium mb-2">3. Instant Action</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Trigger automations for instant follow-up and lead assignment
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

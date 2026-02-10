@@ -342,3 +342,11 @@ Start building step-by-step. Use Firebase SDK everywhere possible. Optimize the 
 Ask if any clarification is needed
 
 After build is completed show and guide the manual setups and configs required from my end like apis setup and firebase setup etc.....
+
+3. In messages page - Unified message dashboard for whatsapp , sms
+
+4. Improve the landing page to a modern saas style with all features shown.
+   Note: Donot change the current Hero title and subtitle
+   remove the pricing table
+
+5. in the hero section on clicking free trial a modal popup with the fields(users name , mail and phone number) and get saved in firestore

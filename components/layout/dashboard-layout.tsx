@@ -30,7 +30,6 @@ import {
   Bell,
   CreditCard,
   UserPlus,
-  BarChart3,
   Link2,
   Building2,
 } from 'lucide-react';
@@ -43,7 +42,6 @@ const navigation = [
   { name: 'Telecalling', href: '/telecalling', icon: Phone },
   { name: 'Tasks', href: '/tasks', icon: Calendar },
   { name: 'Automations', href: '/automations', icon: Zap },
-  { name: 'Reports', href: '/reports', icon: BarChart3 },
   { name: 'Integrations', href: '/integrations', icon: Link2 },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];

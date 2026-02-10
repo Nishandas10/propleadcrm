@@ -70,6 +70,9 @@ const PLATFORMS = [
   { id: 'property_finder', name: 'Property Finder', icon: '🏠', color: 'bg-red-100 text-red-800' },
   { id: 'bayut', name: 'Bayut', icon: '🏡', color: 'bg-blue-100 text-blue-800' },
   { id: 'dubizzle', name: 'Dubizzle', icon: '📍', color: 'bg-orange-100 text-orange-800' },
+  { id: 'magicbricks', name: 'MagicBricks', icon: '🧱', color: 'bg-red-100 text-red-800' },
+  { id: '99acres', name: '99acres', icon: '🏘️', color: 'bg-green-100 text-green-800' },
+  { id: 'housing', name: 'Housing.com', icon: '🏢', color: 'bg-orange-100 text-orange-800' },
   { id: 'website', name: 'Your Website', icon: '🌐', color: 'bg-green-100 text-green-800' },
 ];
 

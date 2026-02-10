@@ -42,15 +42,21 @@ import {
   Sparkles,
   Copy,
   ExternalLink,
+  Smartphone,
+  MessagesSquare,
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { toast } from 'sonner';
+
+// Channel types
+type MessageChannel = 'all' | 'whatsapp' | 'sms';
 
 // Conversation type combining lead + last message
 interface Conversation {
   lead: Lead;
   lastMessage?: Message;
   unreadCount: number;
+  channel: 'whatsapp' | 'sms';
 }
 
 export default function MessagesPage() {
@@ -61,6 +67,8 @@ export default function MessagesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [newMessage, setNewMessage] = useState('');
   const [activeTab, setActiveTab] = useState<'all' | 'unread' | 'archived'>('all');
+  const [channelFilter, setChannelFilter] = useState<MessageChannel>('all');
+  const [sendChannel, setSendChannel] = useState<'whatsapp' | 'sms'>('whatsapp');
   
   // Call dialog state
   const [showCallDialog, setShowCallDialog] = useState(false);
@@ -72,17 +80,34 @@ export default function MessagesPage() {
   const [aiSuggestion, setAiSuggestion] = useState('');
   const [loadingAi, setLoadingAi] = useState(false);
 
+  // Message stats
+  const messageStats = useMemo(() => {
+    const whatsappConvs = conversations.filter(c => c.channel === 'whatsapp');
+    const smsConvs = conversations.filter(c => c.channel === 'sms');
+    const unreadTotal = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
+    
+    return {
+      total: conversations.length,
+      whatsapp: whatsappConvs.length,
+      sms: smsConvs.length,
+      unread: unreadTotal,
+    };
+  }, [conversations]);
+
   // Load dummy data for guest mode
   useEffect(() => {
     if (isGuest) {
       // Create conversations from leads and messages
-      const convs: Conversation[] = DUMMY_LEADS.map((lead) => {
+      const convs: Conversation[] = DUMMY_LEADS.map((lead, index) => {
         const leadMessages = DUMMY_MESSAGES[lead.id] || [];
         const lastMessage = leadMessages[leadMessages.length - 1];
+        // Alternate between whatsapp and sms for demo
+        const channel: 'whatsapp' | 'sms' = index % 3 === 0 ? 'sms' : 'whatsapp';
         return {
           lead,
           lastMessage,
           unreadCount: leadMessages.filter(m => m.direction === 'in' && m.status !== 'read').length,
+          channel,
         };
       });
       
@@ -99,13 +124,19 @@ export default function MessagesPage() {
       if (convs.length > 0) {
         setSelectedLead(convs[0].lead);
         setMessages(DUMMY_MESSAGES[convs[0].lead.id] || []);
+        setSendChannel(convs[0].channel);
       }
     }
   }, [isGuest]);
 
-  // Filter conversations based on search
+  // Filter conversations based on search and channel
   const filteredConversations = useMemo(() => {
     let filtered = conversations;
+    
+    // Filter by channel
+    if (channelFilter !== 'all') {
+      filtered = filtered.filter((c) => c.channel === channelFilter);
+    }
     
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -122,12 +153,13 @@ export default function MessagesPage() {
     }
     
     return filtered;
-  }, [conversations, searchQuery, activeTab]);
+  }, [conversations, searchQuery, activeTab, channelFilter]);
 
   // Handle selecting a conversation
-  const handleSelectConversation = (lead: Lead) => {
-    setSelectedLead(lead);
-    setMessages(DUMMY_MESSAGES[lead.id] || []);
+  const handleSelectConversation = (conv: Conversation) => {
+    setSelectedLead(conv.lead);
+    setMessages(DUMMY_MESSAGES[conv.lead.id] || []);
+    setSendChannel(conv.channel);
     setAiSuggestion('');
   };
 
@@ -135,8 +167,9 @@ export default function MessagesPage() {
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedLead) return;
     
-    // In real app, this would call the WhatsApp API
-    toast.success('Message sent!');
+    // In real app, this would call the WhatsApp or SMS API
+    const channelLabel = sendChannel === 'whatsapp' ? 'WhatsApp' : 'SMS';
+    toast.success(`${channelLabel} message sent!`);
     setNewMessage('');
   };
 
@@ -261,12 +294,91 @@ export default function MessagesPage() {
 
   return (
     <DashboardLayout>
-      <div className="h-[calc(100vh-4rem)] flex">
+      <div className="h-[calc(100vh-4rem)] flex flex-col">
+        {/* Dashboard Header */}
+        <div className="border-b bg-white p-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+              <h1 className="text-2xl font-bold">Messages</h1>
+              <p className="text-muted-foreground">Unified inbox for WhatsApp & SMS</p>
+            </div>
+            
+            {/* Stats Cards */}
+            <div className="flex items-center gap-3">
+              <Card className="bg-gradient-to-br from-green-50 to-green-100/50 border-green-200">
+                <CardContent className="p-3 flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                    <MessageSquare className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">WhatsApp</p>
+                    <p className="text-lg font-bold text-green-700">{messageStats.whatsapp}</p>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 border-blue-200">
+                <CardContent className="p-3 flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                    <Smartphone className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">SMS</p>
+                    <p className="text-lg font-bold text-blue-700">{messageStats.sms}</p>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-gradient-to-br from-red-50 to-red-100/50 border-red-200">
+                <CardContent className="p-3 flex items-center gap-3">
+                  <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
+                    <MessagesSquare className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Unread</p>
+                    <p className="text-lg font-bold text-red-700">{messageStats.unread}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-1 flex overflow-hidden">
         {/* Conversations List */}
         <div className="w-full md:w-96 border-r flex flex-col">
           {/* Header */}
-          <div className="p-4 border-b">
-            <h1 className="text-xl font-bold mb-4">Messages</h1>
+          <div className="p-4 border-b space-y-4">
+            {/* Channel Filter */}
+            <div className="flex items-center gap-2">
+              <Button
+                variant={channelFilter === 'all' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setChannelFilter('all')}
+                className="flex-1"
+              >
+                <MessagesSquare className="w-4 h-4 mr-1" />
+                All
+              </Button>
+              <Button
+                variant={channelFilter === 'whatsapp' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setChannelFilter('whatsapp')}
+                className="flex-1"
+              >
+                <MessageSquare className="w-4 h-4 mr-1" />
+                WhatsApp
+              </Button>
+              <Button
+                variant={channelFilter === 'sms' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setChannelFilter('sms')}
+                className="flex-1"
+              >
+                <Smartphone className="w-4 h-4 mr-1" />
+                SMS
+              </Button>
+            </div>
             
             {/* Search */}
             <div className="relative">
@@ -280,7 +392,7 @@ export default function MessagesPage() {
             </div>
             
             {/* Tabs */}
-            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)} className="mt-4">
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
               <TabsList className="w-full">
                 <TabsTrigger value="all" className="flex-1">All</TabsTrigger>
                 <TabsTrigger value="unread" className="flex-1">
@@ -307,17 +419,29 @@ export default function MessagesPage() {
               filteredConversations.map((conv) => (
                 <div
                   key={conv.lead.id}
-                  onClick={() => handleSelectConversation(conv.lead)}
+                  onClick={() => handleSelectConversation(conv)}
                   className={`p-4 border-b cursor-pointer hover:bg-muted/50 transition-colors ${
                     selectedLead?.id === conv.lead.id ? 'bg-muted' : ''
                   }`}
                 >
                   <div className="flex items-start gap-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback>
-                        {conv.lead.name.slice(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
+                    <div className="relative">
+                      <Avatar className="h-10 w-10">
+                        <AvatarFallback>
+                          {conv.lead.name.slice(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      {/* Channel indicator */}
+                      <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center ${
+                        conv.channel === 'whatsapp' ? 'bg-green-500' : 'bg-blue-500'
+                      }`}>
+                        {conv.channel === 'whatsapp' ? (
+                          <MessageSquare className="w-3 h-3 text-white" />
+                        ) : (
+                          <Smartphone className="w-3 h-3 text-white" />
+                        )}
+                      </div>
+                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <span className="font-medium truncate">{conv.lead.name}</span>
@@ -350,16 +474,35 @@ export default function MessagesPage() {
           {selectedLead ? (
             <>
               {/* Chat Header */}
-              <div className="p-4 border-b flex items-center justify-between">
+              <div className="p-4 border-b flex items-center justify-between bg-white">
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
-                    <AvatarFallback>
-                      {selectedLead.name.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                  <div className="relative">
+                    <Avatar className="h-10 w-10">
+                      <AvatarFallback>
+                        {selectedLead.name.slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    {/* Channel indicator */}
+                    <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center ${
+                      sendChannel === 'whatsapp' ? 'bg-green-500' : 'bg-blue-500'
+                    }`}>
+                      {sendChannel === 'whatsapp' ? (
+                        <MessageSquare className="w-3 h-3 text-white" />
+                      ) : (
+                        <Smartphone className="w-3 h-3 text-white" />
+                      )}
+                    </div>
+                  </div>
                   <div>
                     <h2 className="font-semibold">{selectedLead.name}</h2>
-                    <p className="text-sm text-muted-foreground">{selectedLead.phone}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm text-muted-foreground">{selectedLead.phone}</p>
+                      <Badge variant="outline" className={`text-xs ${
+                        sendChannel === 'whatsapp' ? 'border-green-500 text-green-600' : 'border-blue-500 text-blue-600'
+                      }`}>
+                        {sendChannel === 'whatsapp' ? 'WhatsApp' : 'SMS'}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
                 
@@ -468,10 +611,35 @@ export default function MessagesPage() {
 
               {/* Message Input */}
               <div className="p-4 border-t">
+                {/* Channel Selector */}
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-sm text-muted-foreground">Send via:</span>
+                  <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
+                    <Button
+                      variant={sendChannel === 'whatsapp' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => setSendChannel('whatsapp')}
+                      className="h-7 gap-1"
+                    >
+                      <MessageSquare className="w-3 h-3" />
+                      WhatsApp
+                    </Button>
+                    <Button
+                      variant={sendChannel === 'sms' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => setSendChannel('sms')}
+                      className="h-7 gap-1"
+                    >
+                      <Smartphone className="w-3 h-3" />
+                      SMS
+                    </Button>
+                  </div>
+                </div>
+                
                 <div className="flex items-end gap-2">
                   <div className="flex-1">
                     <Textarea
-                      placeholder="Type a message..."
+                      placeholder={`Type a ${sendChannel === 'whatsapp' ? 'WhatsApp' : 'SMS'} message...`}
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       className="min-h-10 max-h-32 resize-none"
@@ -493,7 +661,11 @@ export default function MessagesPage() {
                     >
                       <Sparkles className={`h-4 w-4 ${loadingAi ? 'animate-spin' : ''}`} />
                     </Button>
-                    <Button onClick={handleSendMessage} disabled={!newMessage.trim()}>
+                    <Button 
+                      onClick={handleSendMessage} 
+                      disabled={!newMessage.trim()}
+                      className={sendChannel === 'whatsapp' ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'}
+                    >
                       <Send className="h-4 w-4" />
                     </Button>
                   </div>
@@ -603,6 +775,7 @@ export default function MessagesPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
     </DashboardLayout>
   );
