@@ -247,3 +247,6 @@ export interface FormEmbedConfig {
   webhook_url: string;
   created_at: Timestamp;
 }
+
+// Re-export listing types
+export * from "./types/listing";
