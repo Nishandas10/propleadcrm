@@ -75,7 +75,7 @@ import type { Lead, Task } from '@/lib/types';
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
 export default function DashboardPage() {
-  const { user, isGuest, loading } = useAuth();
+  const { user, isGuest } = useAuth();
   const { leads } = useLeadStore();
   const { tasks, dueTodayTasks, dueTomorrowTasks, overdueTasks } = useTaskStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'analytics'>('overview');
@@ -217,12 +217,18 @@ export default function DashboardPage() {
         </div>
 
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)} className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="overview" className="gap-2">
+          <TabsList className="bg-muted p-1">
+            <TabsTrigger 
+              value="overview" 
+              className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
               <BarChart3 className="h-4 w-4" />
               Overview
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="gap-2">
+            <TabsTrigger 
+              value="analytics" 
+              className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
               <PieChartIcon className="h-4 w-4" />
               Analytics & Reports
             </TabsTrigger>

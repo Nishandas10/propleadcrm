@@ -302,45 +302,6 @@ export default function MessagesPage() {
               <h1 className="text-2xl font-bold">Messages</h1>
               <p className="text-muted-foreground">Unified inbox for WhatsApp & SMS</p>
             </div>
-            
-            {/* Stats Cards */}
-            <div className="flex items-center gap-3">
-              <Card className="bg-gradient-to-br from-green-50 to-green-100/50 border-green-200">
-                <CardContent className="p-3 flex items-center gap-3">
-                  <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                    <MessageSquare className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">WhatsApp</p>
-                    <p className="text-lg font-bold text-green-700">{messageStats.whatsapp}</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 border-blue-200">
-                <CardContent className="p-3 flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                    <Smartphone className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">SMS</p>
-                    <p className="text-lg font-bold text-blue-700">{messageStats.sms}</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-gradient-to-br from-red-50 to-red-100/50 border-red-200">
-                <CardContent className="p-3 flex items-center gap-3">
-                  <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
-                    <MessagesSquare className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Unread</p>
-                    <p className="text-lg font-bold text-red-700">{messageStats.unread}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
           </div>
         </div>
 
@@ -359,24 +320,33 @@ export default function MessagesPage() {
               >
                 <MessagesSquare className="w-4 h-4 mr-1" />
                 All
+                <Badge variant="secondary" className="ml-1.5 h-5 min-w-5 px-1.5 justify-center">
+                  {messageStats.total}
+                </Badge>
               </Button>
               <Button
                 variant={channelFilter === 'whatsapp' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setChannelFilter('whatsapp')}
-                className="flex-1"
+                className={`flex-1 ${channelFilter === 'whatsapp' ? 'bg-green-600 hover:bg-green-700' : ''}`}
               >
                 <MessageSquare className="w-4 h-4 mr-1" />
                 WhatsApp
+                <Badge variant={channelFilter === 'whatsapp' ? 'outline' : 'secondary'} className={`ml-1.5 h-5 min-w-5 px-1.5 justify-center ${channelFilter === 'whatsapp' ? 'bg-green-700 text-white border-green-500' : ''}`}>
+                  {messageStats.whatsapp}
+                </Badge>
               </Button>
               <Button
                 variant={channelFilter === 'sms' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setChannelFilter('sms')}
-                className="flex-1"
+                className={`flex-1 ${channelFilter === 'sms' ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
               >
                 <Smartphone className="w-4 h-4 mr-1" />
                 SMS
+                <Badge variant={channelFilter === 'sms' ? 'outline' : 'secondary'} className={`ml-1.5 h-5 min-w-5 px-1.5 justify-center ${channelFilter === 'sms' ? 'bg-blue-700 text-white border-blue-500' : ''}`}>
+                  {messageStats.sms}
+                </Badge>
               </Button>
             </div>
             

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,14 +18,12 @@ import { getDbInstance } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
 import {
-  MessageSquare,
   Users,
   BarChart3,
   Zap,
   Bell,
   CheckCircle2,
   ArrowRight,
-  Star,
   Building2,
   Phone,
   Target,
@@ -37,6 +35,12 @@ import {
   Sparkles,
   Bot,
   Layers,
+  Gift,
+  Rocket,
+  BadgePercent,
+  PartyPopper,
+  Flame,
+  TrendingDown,
 } from 'lucide-react';
 
 const features = [
@@ -47,7 +51,8 @@ const features = [
     color: 'bg-blue-500',
   },
   {
-    icon: MessageSquare,
+    icon: null,
+    customIcon: '/logos/WhatsApp.png',
     title: 'WhatsApp Integration',
     description: 'Send & receive WhatsApp messages directly. Auto-capture incoming leads and log all conversations.',
     color: 'bg-green-500',
@@ -96,41 +101,20 @@ const features = [
   },
 ];
 
-const testimonials = [
-  {
-    name: 'Rajesh Sharma',
-    role: 'Senior Broker, Mumbai',
-    content: 'PropLead helped me close 40% more deals in just 3 months. The WhatsApp automation is a game-changer!',
-    avatar: 'RS',
-  },
-  {
-    name: 'Priya Patel',
-    role: 'Real Estate Agent, Bangalore',
-    content: 'Finally, a CRM that understands Indian real estate. The lead scoring saves me hours of manual sorting.',
-    avatar: 'PP',
-  },
-  {
-    name: 'Amit Verma',
-    role: 'Agency Owner, Delhi NCR',
-    content: 'My team of 12 agents uses PropLead daily. The dashboard gives me complete visibility into their performance.',
-    avatar: 'AV',
-  },
-];
-
-const stats = [
-  { value: '10,000+', label: 'Leads Managed' },
-  { value: '500+', label: 'Active Agents' },
-  { value: '₹50Cr+', label: 'Deals Closed' },
-  { value: '98%', label: 'Customer Satisfaction' },
-];
-
 const integrations = [
-  { name: 'MagicBricks', icon: '🧱' },
-  { name: '99acres', icon: '🏘️' },
-  { name: 'Housing.com', icon: '🏢' },
-  { name: 'Facebook Ads', icon: '📘' },
-  { name: 'Google Ads', icon: '🔍' },
-  { name: 'WhatsApp', icon: '💬' },
+  { name: 'MagicBricks', logo: '/logos/Magicbricks.png' },
+  { name: '99acres', logo: '/logos/99acres.png' },
+  { name: 'Housing.com', logo: '/logos/Housing.png' },
+  { name: 'Meta Ads', logo: '/logos/Meta.png' },
+  { name: 'Google Ads', logo: '/logos/Google.png' },
+  { name: 'WhatsApp', logo: '/logos/WhatsApp.png' },
+];
+
+const earlyBirdBenefits = [
+  { icon: BadgePercent, text: 'First 100 users get 70% OFF lifetime' },
+  { icon: Gift, text: 'Free onboarding & setup assistance' },
+  { icon: Rocket, text: 'Priority access to new features' },
+  { icon: PartyPopper, text: 'Exclusive founder community access' },
 ];
 
 export function LandingPage() {
@@ -139,6 +123,7 @@ export function LandingPage() {
   const [showTrialModal, setShowTrialModal] = useState(false);
   const [trialForm, setTrialForm] = useState({ name: '', email: '', phone: '' });
   const [submitting, setSubmitting] = useState(false);
+  const [waitlistCount] = useState(73); // Simulated current count - replace with real data
 
   const handleGuestLogin = () => {
     enterGuestMode();
@@ -155,18 +140,19 @@ export function LandingPage() {
     setSubmitting(true);
     try {
       const db = getDbInstance();
-      await addDoc(collection(db, 'trial_signups'), {
+      await addDoc(collection(db, 'waitlist'), {
         name: trialForm.name,
         email: trialForm.email,
         phone: trialForm.phone,
         created_at: serverTimestamp(),
-        status: 'pending',
+        source: 'landing_page',
+        offer: 'early_bird_70_off',
       });
-      toast.success('Thank you! We\'ll contact you shortly.');
+      toast.success('🎉 You\'re on the waitlist! We\'ll notify you when we launch.');
       setShowTrialModal(false);
       setTrialForm({ name: '', email: '', phone: '' });
     } catch (error) {
-      console.error('Error saving trial signup:', error);
+      console.error('Error saving waitlist signup:', error);
       toast.error('Something went wrong. Please try again.');
     } finally {
       setSubmitting(false);
@@ -174,13 +160,22 @@ export function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-linear-to-b from-slate-50 to-white">
+      {/* Urgency Banner */}
+      <div className="bg-linear-to-r from-orange-500 via-red-500 to-pink-500 text-white py-2 px-4 text-center text-sm font-medium">
+        <span className="inline-flex items-center gap-2">
+          <Sparkles className="w-4 h-4" />
+          🔥 Early Bird Offer: First 100 users get 70% OFF lifetime! Only few spots left
+          <Sparkles className="w-4 h-4" />
+        </span>
+      </div>
+
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b">
+      <header className="fixed top-10 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-md">
+              <div className="w-8 h-8 bg-linear-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-md">
                 <span className="text-white font-bold text-sm">PL</span>
               </div>
               <span className="font-bold text-xl">PropLead</span>
@@ -189,21 +184,16 @@ export function LandingPage() {
             <div className="hidden md:flex items-center gap-8">
               <a href="#features" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Features</a>
               <a href="#how-it-works" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">How It Works</a>
-              <a href="#testimonials" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Testimonials</a>
-              <Link href="/login">
-                <Button variant="ghost" size="sm">Sign In</Button>
-              </Link>
-              <Button size="sm" onClick={() => setShowTrialModal(true)} className="shadow-md">
-                Start Free Trial
+              <Button variant="ghost" size="sm" onClick={handleGuestLogin}>Try Live Demo</Button>
+              <Button size="sm" onClick={() => setShowTrialModal(true)} className="shadow-md bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
+                🎁 Join Waitlist
               </Button>
             </div>
             
             <div className="md:hidden flex items-center gap-2">
-              <Link href="/login">
-                <Button variant="ghost" size="sm">Sign In</Button>
-              </Link>
-              <Button size="sm" onClick={() => setShowTrialModal(true)}>
-                Free Trial
+              <Button variant="ghost" size="sm" onClick={handleGuestLogin}>Demo</Button>
+              <Button size="sm" onClick={() => setShowTrialModal(true)} className="bg-linear-to-r from-orange-500 to-red-500">
+                Join Waitlist
               </Button>
             </div>
           </div>
@@ -211,7 +201,7 @@ export function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <section className="pt-40 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl"></div>
@@ -219,63 +209,107 @@ export function LandingPage() {
         </div>
 
         <div className="max-w-5xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/10 to-blue-500/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-8 border border-primary/20">
+          <div className="inline-flex items-center gap-2 bg-linear-to-r from-primary/10 to-blue-500/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-8 border border-primary/20">
             <Sparkles className="w-4 h-4" />
-            Built for Indian Real Estate Agents
+            AI CRM & Automation for Indian Real Estate Agents
             <ChevronRight className="w-4 h-4" />
           </div>
           
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
             Never Miss a Follow-up,{' '}
-            <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Close More Deals</span>
+            <span className="bg-linear-to-r from-primary to-blue-600 bg-clip-text text-transparent">Capture More Leads & Close More Deals</span>
           </h1>
           
           <p className="text-lg sm:text-xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
-            The all-in-one CRM with WhatsApp automation for real estate agents. 
+            The all-in-one AI CRM with WhatsApp automation for real estate agents. 
             Capture leads, automate follow-ups, and track your pipeline — all from one place.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-            <Button size="lg" className="w-full sm:w-auto shadow-lg hover:shadow-xl transition-shadow text-base px-8" onClick={() => setShowTrialModal(true)}>
-              Start Free Trial
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              onClick={handleGuestLogin}
-              className="w-full sm:w-auto text-base px-8 group"
-            >
-              <Play className="mr-2 w-4 h-4 group-hover:scale-110 transition-transform" />
-              Watch Demo
-            </Button>
+          {/* Waitlist Form - Inline */}
+          <div className="max-w-xl mx-auto mb-8">
+            <div className="bg-white rounded-2xl shadow-xl border-2 border-orange-200 p-6">
+              <div className="flex items-center justify-center gap-2 text-orange-600 font-semibold mb-4">
+                <Clock className="w-5 h-5" />
+                <span>Limited Time: First 100 users get 70% OFF forever!</span>
+              </div>
+              
+              <form onSubmit={handleTrialSubmit} className="space-y-3">
+                <Input
+                  placeholder="Your email address"
+                  type="email"
+                  value={trialForm.email}
+                  onChange={(e) => setTrialForm({ ...trialForm, email: e.target.value })}
+                  className="h-12 text-base"
+                  required
+                />
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Your name"
+                    value={trialForm.name}
+                    onChange={(e) => setTrialForm({ ...trialForm, name: e.target.value })}
+                    className="h-12 text-base"
+                    required
+                  />
+                  <Input
+                    placeholder="Phone number"
+                    type="tel"
+                    value={trialForm.phone}
+                    onChange={(e) => setTrialForm({ ...trialForm, phone: e.target.value })}
+                    className="h-12 text-base"
+                    required
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  size="lg" 
+                  className="w-full h-12 text-base bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-lg"
+                  disabled={submitting}
+                >
+                  {submitting ? 'Joining...' : '🎁 Join Waitlist & Get 70% OFF'}
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </form>
+              
+              <p className="text-xs text-gray-500 mt-3 flex items-center justify-center gap-4">
+                <span className="flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-green-500" />
+                  No credit card required
+                </span>
+                <span className="flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-green-500" />
+                  Unsubscribe anytime
+                </span>
+              </p>
+            </div>
           </div>
-          
-          <p className="text-sm text-gray-500 flex items-center justify-center gap-4">
-            <span className="flex items-center gap-1">
-              <CheckCircle2 className="w-4 h-4 text-green-500" />
-              7-day free trial
-            </span>
-            <span className="flex items-center gap-1">
-              <CheckCircle2 className="w-4 h-4 text-green-500" />
-              No credit card required
-            </span>
-            <span className="flex items-center gap-1">
-              <CheckCircle2 className="w-4 h-4 text-green-500" />
-              Cancel anytime
-            </span>
-          </p>
+
+          <Button 
+            variant="outline" 
+            size="lg" 
+            onClick={handleGuestLogin}
+            className="text-base px-8 group"
+          >
+            <Play className="mr-2 w-4 h-4 group-hover:scale-110 transition-transform" />
+            Try Live Demo (No Signup)
+          </Button>
         </div>
 
-        {/* Stats Bar */}
+        {/* Early Bird Benefits */}
         <div className="max-w-4xl mx-auto mt-16">
-          <div className="bg-white rounded-2xl shadow-xl border p-6 grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-gray-900">{stat.value}</div>
-                <div className="text-sm text-gray-500">{stat.label}</div>
-              </div>
-            ))}
+          <div className="bg-linear-to-r from-orange-50 to-red-50 rounded-2xl border border-orange-200 p-6">
+            <h3 className="text-center text-lg font-semibold text-gray-900 mb-6">
+              🎉 Early Bird Benefits (First 100 Users)
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {earlyBirdBenefits.map((benefit, index) => (
+                <div key={index} className="flex flex-col items-center text-center p-3">
+                  <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-2 shadow-sm">
+                    <benefit.icon className="w-5 h-5 text-orange-500" />
+                  </div>
+                  <span className="text-sm text-gray-700 font-medium">{benefit.text}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -303,7 +337,17 @@ export function LandingPage() {
                 className="bg-white p-6 rounded-2xl border shadow-sm hover:shadow-lg transition-all duration-300 group hover:-translate-y-1"
               >
                 <div className={`w-12 h-12 ${feature.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                  <feature.icon className="w-6 h-6 text-white" />
+                  {feature.customIcon ? (
+                    <Image
+                      src={feature.customIcon}
+                      alt={feature.title}
+                      width={28}
+                      height={28}
+                      className="object-contain"
+                    />
+                  ) : feature.icon ? (
+                    <feature.icon className="w-6 h-6 text-white" />
+                  ) : null}
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   {feature.title}
@@ -318,28 +362,44 @@ export function LandingPage() {
       </section>
 
       {/* Integrations Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-slate-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-linear-to-b from-slate-50 to-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium mb-4">
+              <Globe className="w-4 h-4" />
+              Seamless Integrations
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               Integrates with Your Favorite Platforms
             </h2>
-            <p className="text-gray-600">
-              Auto-import leads from property portals and ad platforms
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Auto-import leads from property portals and ad platforms. Connect once and watch leads flow in automatically.
             </p>
           </div>
           
-          <div className="flex flex-wrap items-center justify-center gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
             {integrations.map((integration) => (
               <div
                 key={integration.name}
-                className="flex items-center gap-2 bg-white px-6 py-3 rounded-xl border shadow-sm hover:shadow-md transition-shadow"
+                className="group flex flex-col items-center justify-center bg-white p-6 rounded-2xl border-2 border-gray-100 hover:border-primary/30 hover:shadow-lg transition-all duration-300"
               >
-                <span className="text-2xl">{integration.icon}</span>
-                <span className="font-medium text-gray-700">{integration.name}</span>
+                <div className="w-16 h-16 mb-3 relative flex items-center justify-center">
+                  <Image
+                    src={integration.logo}
+                    alt={integration.name}
+                    width={64}
+                    height={64}
+                    className="object-contain group-hover:scale-110 transition-transform duration-300"
+                  />
+                </div>
+                <span className="font-medium text-gray-700 text-sm text-center">{integration.name}</span>
               </div>
             ))}
           </div>
+          
+          <p className="text-center text-sm text-gray-500 mt-8">
+            And many more coming soon...
+          </p>
         </div>
       </section>
 
@@ -379,7 +439,7 @@ export function LandingPage() {
             ].map((item) => (
               <div key={item.step} className="relative">
                 <div className="bg-white rounded-2xl border p-8 text-center hover:shadow-lg transition-shadow h-full">
-                  <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/80 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <div className="w-16 h-16 bg-linear-to-br from-primary to-primary/80 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
                     <item.icon className="w-8 h-8" />
                   </div>
                   <div className="absolute -top-3 -left-3 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold">
@@ -398,66 +458,102 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
+      {/* Why Join Now Section */}
+      <section id="why-now" className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-medium mb-4">
-              <Star className="w-4 h-4" />
-              Testimonials
+            <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium mb-4">
+              <Flame className="w-4 h-4" />
+              Limited Time Only
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Loved by Real Estate Professionals
+              Why Join the Waitlist Now?
             </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Early supporters get exclusive benefits that won&apos;t be available after launch.
+            </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial) => (
-              <div
-                key={testimonial.name}
-                className="bg-white p-8 rounded-2xl border shadow-sm hover:shadow-lg transition-shadow"
-              >
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <p className="text-gray-700 mb-6 leading-relaxed italic">
-                  &ldquo;{testimonial.content}&rdquo;
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
-                    {testimonial.avatar}
-                  </div>
-                  <div>
-                    <div className="font-semibold text-gray-900">{testimonial.name}</div>
-                    <div className="text-sm text-gray-500">{testimonial.role}</div>
-                  </div>
-                </div>
+            <div className="bg-white p-8 rounded-2xl border shadow-sm hover:shadow-lg transition-shadow text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <TrendingDown className="w-8 h-8 text-green-600" />
               </div>
-            ))}
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">70% OFF Forever</h3>
+              <p className="text-gray-600">
+                First 100 users lock in 70% discount on all plans. This price never increases for you.
+              </p>
+            </div>
+            
+            <div className="bg-white p-8 rounded-2xl border shadow-sm hover:shadow-lg transition-shadow text-center">
+              <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Gift className="w-8 h-8 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Free Setup & Training</h3>
+              <p className="text-gray-600">
+                Get personalized onboarding worth ₹15,000 absolutely free. We&apos;ll help you migrate your data.
+              </p>
+            </div>
+            
+            <div className="bg-white p-8 rounded-2xl border shadow-sm hover:shadow-lg transition-shadow text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Users className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Shape the Product</h3>
+              <p className="text-gray-600">
+                Early users get direct access to our team. Your feedback will shape PropLead&apos;s future.
+              </p>
+            </div>
+          </div>
+
+          {/* Urgency Counter */}
+          <div className="mt-12 bg-linear-to-r from-orange-500 to-red-500 rounded-2xl p-8 text-center">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+              <div>
+                <p className="text-white/80 text-sm mb-1">Early Bird Spots Remaining</p>
+                <p className="text-5xl font-bold text-white">{100 - waitlistCount}</p>
+              </div>
+              <div className="hidden md:block w-px h-16 bg-white/30"></div>
+              <div>
+                <p className="text-white text-lg font-medium mb-2">Don&apos;t miss out on 70% OFF!</p>
+                <Button 
+                  size="lg" 
+                  variant="secondary" 
+                  className="shadow-lg"
+                  onClick={() => document.getElementById('waitlist-form')?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  Claim Your Spot Now
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="waitlist-form" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-br from-primary via-primary to-blue-600 rounded-3xl p-12 text-center relative overflow-hidden">
+          <div className="bg-linear-to-br from-orange-500 via-red-500 to-pink-600 rounded-3xl p-12 text-center relative overflow-hidden">
             {/* Decorative elements */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
             
             <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 bg-white/20 text-white px-4 py-2 rounded-full text-sm font-bold mb-6">
+                <PartyPopper className="w-4 h-4" />
+                Only {100 - waitlistCount} Early Bird Spots Left!
+              </div>
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                Ready to Close More Deals?
+                Don&apos;t Miss 70% OFF Forever
               </h2>
-              <p className="text-lg text-white/80 mb-8 max-w-2xl mx-auto">
-                Join hundreds of real estate agents who never miss a follow-up. Start your free trial today.
+              <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
+                Join the waitlist now and lock in early bird pricing before we launch. 
+                This offer won&apos;t be available after the first 100 users.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Button size="lg" variant="secondary" className="w-full sm:w-auto shadow-lg" onClick={() => setShowTrialModal(true)}>
-                  Start Your Free Trial
+                <Button size="lg" variant="secondary" className="w-full sm:w-auto shadow-lg text-orange-600 font-bold" onClick={() => setShowTrialModal(true)}>
+                  🎁 Claim My 70% Discount
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
                 <Button 
@@ -477,7 +573,7 @@ export function LandingPage() {
       {/* Footer */}
       <footer className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-900">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div className="md:col-span-2">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
@@ -495,16 +591,7 @@ export function LandingPage() {
               <ul className="space-y-2 text-gray-400">
                 <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
                 <li><a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a></li>
-                <li><a href="#testimonials" className="hover:text-white transition-colors">Testimonials</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold text-white mb-4">Legal</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+                <li><a href="#why-now" className="hover:text-white transition-colors">Why Join Now</a></li>
               </ul>
             </div>
           </div>
@@ -522,13 +609,13 @@ export function LandingPage() {
         </div>
       </footer>
 
-      {/* Free Trial Modal */}
+      {/* Waitlist Modal */}
       <Dialog open={showTrialModal} onOpenChange={setShowTrialModal}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-2xl">Start Your Free Trial</DialogTitle>
+            <DialogTitle className="text-2xl">🎁 Join the Waitlist</DialogTitle>
             <DialogDescription>
-              Get 7 days of full access. No credit card required.
+              Lock in 70% OFF forever as an early bird! Only {100 - waitlistCount} spots remaining.
             </DialogDescription>
           </DialogHeader>
           
@@ -568,13 +655,13 @@ export function LandingPage() {
               />
             </div>
             
-            <Button type="submit" className="w-full" size="lg" disabled={submitting}>
-              {submitting ? 'Submitting...' : 'Start Free Trial'}
+            <Button type="submit" className="w-full bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600" size="lg" disabled={submitting}>
+              {submitting ? 'Joining...' : '🚀 Claim My Spot & 70% OFF'}
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
             
             <p className="text-xs text-center text-gray-500">
-              By signing up, you agree to our Terms of Service and Privacy Policy.
+              We&apos;ll notify you when we launch. Unsubscribe anytime.
             </p>
           </form>
         </DialogContent>
