@@ -132,8 +132,8 @@ export function LandingPage() {
 
   const handleTrialSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!trialForm.name || !trialForm.email || !trialForm.phone) {
-      toast.error('Please fill all fields');
+    if (!trialForm.name || !trialForm.phone) {
+      toast.error('Please fill name and phone number');
       return;
     }
 
@@ -142,7 +142,7 @@ export function LandingPage() {
       const db = getDbInstance();
       await addDoc(collection(db, 'waitlist'), {
         name: trialForm.name,
-        email: trialForm.email,
+        email: trialForm.email || '',
         phone: trialForm.phone,
         created_at: serverTimestamp(),
         source: 'landing_page',
@@ -235,14 +235,13 @@ export function LandingPage() {
               
               <form onSubmit={handleTrialSubmit} className="space-y-3">
                 <Input
-                  placeholder="Your email address"
+                  placeholder="Your email address (Optional)"
                   type="email"
                   value={trialForm.email}
                   onChange={(e) => setTrialForm({ ...trialForm, email: e.target.value })}
                   className="h-12 text-base"
-                  required
                 />
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Input
                     placeholder="Your name"
                     value={trialForm.name}
@@ -251,7 +250,7 @@ export function LandingPage() {
                     required
                   />
                   <Input
-                    placeholder="Phone number"
+                    placeholder="Phone number *"
                     type="tel"
                     value={trialForm.phone}
                     onChange={(e) => setTrialForm({ ...trialForm, phone: e.target.value })}
@@ -632,19 +631,18 @@ export function LandingPage() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
+              <Label htmlFor="email">Email Address (Optional)</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="Enter your email"
                 value={trialForm.email}
                 onChange={(e) => setTrialForm({ ...trialForm, email: e.target.value })}
-                required
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="phone">Phone Number <span className="text-red-500">*</span></Label>
               <Input
                 id="phone"
                 type="tel"

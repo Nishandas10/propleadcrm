@@ -92,13 +92,18 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const handleWaitlistSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!waitlistForm.name || !waitlistForm.phone) {
+      toast.error('Please fill name and phone number');
+      return;
+    }
+
     setSubmitting(true);
     
     try {
       const db = getDbInstance();
       await addDoc(collection(db, 'trial_signups'), {
         name: waitlistForm.name,
-        email: waitlistForm.email,
+        email: waitlistForm.email || '',
         phone: waitlistForm.phone,
         created_at: serverTimestamp(),
         status: 'waitlist',
@@ -346,19 +351,18 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="waitlist-email">Email Address</Label>
+              <Label htmlFor="waitlist-email">Email Address (Optional)</Label>
               <Input
                 id="waitlist-email"
                 type="email"
                 placeholder="Enter your email"
                 value={waitlistForm.email}
                 onChange={(e) => setWaitlistForm({ ...waitlistForm, email: e.target.value })}
-                required
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="waitlist-phone">Phone Number</Label>
+              <Label htmlFor="waitlist-phone">Phone Number <span className="text-red-500">*</span></Label>
               <Input
                 id="waitlist-phone"
                 type="tel"
