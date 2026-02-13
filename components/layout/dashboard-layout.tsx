@@ -79,7 +79,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   // Waitlist modal state
   const [showWaitlistModal, setShowWaitlistModal] = useState(false);
-  const [waitlistForm, setWaitlistForm] = useState({ name: '', email: '', phone: '' });
+  const [waitlistForm, setWaitlistForm] = useState({ name: '', phone: '' });
   const [submitting, setSubmitting] = useState(false);
 
   // Initialize guest data when in guest mode
@@ -103,16 +103,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       const db = getDbInstance();
       await addDoc(collection(db, 'trial_signups'), {
         name: waitlistForm.name,
-        email: waitlistForm.email || '',
         phone: waitlistForm.phone,
         created_at: serverTimestamp(),
         status: 'waitlist',
         source: 'dashboard_sidebar',
       });
       
-      toast.success('🎉 You\'re on the waitlist! We\'ll notify you when we launch.');
+      toast.success('🎉 Your free trial is starting! We\'ll be in touch shortly.');
       setShowWaitlistModal(false);
-      setWaitlistForm({ name: '', email: '', phone: '' });
+      setWaitlistForm({ name: '', phone: '' });
     } catch (error) {
       console.error('Error submitting waitlist form:', error);
       toast.error('Something went wrong. Please try again.');
@@ -187,7 +186,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 className="w-full bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-md"
               >
                 <Gift className="mr-2 h-4 w-4" />
-                Join Waitlist - 70% OFF
+                👉 Start Free Trial - 70% OFF
               </Button>
             </div>
 
@@ -329,7 +328,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             className="w-full bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-md"
           >
             <Gift className="mr-2 h-4 w-4" />
-            Join Waitlist - 70% OFF
+            👉 Start Free Trial - 70% OFF
           </Button>
         </div>
 
@@ -382,7 +381,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <Dialog open={showWaitlistModal} onOpenChange={setShowWaitlistModal}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-2xl">🎁 Join the Waitlist</DialogTitle>
+            <DialogTitle className="text-2xl">👉 Start Your Free Trial</DialogTitle>
             <DialogDescription>
               Lock in 70% OFF forever as an early bird! Limited spots available.
             </DialogDescription>
@@ -397,17 +396,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 value={waitlistForm.name}
                 onChange={(e) => setWaitlistForm({ ...waitlistForm, name: e.target.value })}
                 required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="waitlist-email">Email Address (Optional)</Label>
-              <Input
-                id="waitlist-email"
-                type="email"
-                placeholder="Enter your email"
-                value={waitlistForm.email}
-                onChange={(e) => setWaitlistForm({ ...waitlistForm, email: e.target.value })}
               />
             </div>
             
@@ -429,12 +417,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               size="lg" 
               disabled={submitting}
             >
-              {submitting ? 'Joining...' : '🚀 Claim My Spot & 70% OFF'}
+              {submitting ? 'Starting...' : '� Start Free Trial & Get 70% OFF'}
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
             
             <p className="text-xs text-center text-gray-500">
-              We&apos;ll notify you when we launch. Unsubscribe anytime.
+              Start your 7-day free trial. No credit card required.
             </p>
           </form>
         </DialogContent>

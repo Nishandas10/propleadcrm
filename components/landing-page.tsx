@@ -41,6 +41,7 @@ import {
   PartyPopper,
   Flame,
   TrendingDown,
+  XCircle,
 } from 'lucide-react';
 
 const features = [
@@ -121,7 +122,7 @@ export function LandingPage() {
   const { enterGuestMode } = useAuth();
   const router = useRouter();
   const [showTrialModal, setShowTrialModal] = useState(false);
-  const [trialForm, setTrialForm] = useState({ name: '', email: '', phone: '' });
+  const [trialForm, setTrialForm] = useState({ name: '', phone: '' });
   const [submitting, setSubmitting] = useState(false);
   const [waitlistCount] = useState(73); // Simulated current count - replace with real data
 
@@ -142,15 +143,14 @@ export function LandingPage() {
       const db = getDbInstance();
       await addDoc(collection(db, 'waitlist'), {
         name: trialForm.name,
-        email: trialForm.email || '',
         phone: trialForm.phone,
         created_at: serverTimestamp(),
         source: 'landing_page',
         offer: 'early_bird_70_off',
       });
-      toast.success('🎉 You\'re on the waitlist! We\'ll notify you when we launch.');
+      toast.success('🎉 Your free trial is starting! We\'ll be in touch shortly.');
       setShowTrialModal(false);
-      setTrialForm({ name: '', email: '', phone: '' });
+      setTrialForm({ name: '', phone: '' });
     } catch (error) {
       console.error('Error saving waitlist signup:', error);
       toast.error('Something went wrong. Please try again.');
@@ -186,14 +186,14 @@ export function LandingPage() {
               <a href="#how-it-works" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">How It Works</a>
               <Button variant="ghost" size="sm" onClick={handleGuestLogin}>Try Live Demo</Button>
               <Button size="sm" onClick={() => setShowTrialModal(true)} className="shadow-md bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
-                🎁 Join Waitlist
+                👉 Start Free Trial
               </Button>
             </div>
             
             <div className="md:hidden flex items-center gap-2">
               <Button variant="ghost" size="sm" onClick={handleGuestLogin}>Demo</Button>
               <Button size="sm" onClick={() => setShowTrialModal(true)} className="bg-linear-to-r from-orange-500 to-red-500">
-                Join Waitlist
+                Start Free Trial
               </Button>
             </div>
           </div>
@@ -211,22 +211,42 @@ export function LandingPage() {
         <div className="max-w-5xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-linear-to-r from-primary/10 to-blue-500/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-8 border border-primary/20">
             <Sparkles className="w-4 h-4" />
-            AI CRM & Automation for Indian Real Estate Agents
+            AI-powered CRM + WhatsApp Automation
             <ChevronRight className="w-4 h-4" />
           </div>
           
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-            Never Miss a Follow-up,{' '}
-            <span className="bg-linear-to-r from-primary to-blue-600 bg-clip-text text-transparent">Capture More Leads & Close More Deals</span>
+            Close 2X More Property Deals{' '}
+            <span className="bg-linear-to-r from-primary to-blue-600 bg-clip-text text-transparent">Without Hiring More Staff.</span>
           </h1>
           
-          <p className="text-lg sm:text-xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
-            The all-in-one AI CRM with WhatsApp automation for real estate agents. 
-            Capture leads, automate follow-ups, and track your pipeline — all from one place.
+          <p className="text-lg sm:text-xl text-gray-600 mb-4 max-w-3xl mx-auto leading-relaxed">
+            Capture leads. Follow up automatically.<br className="hidden sm:block" />
+            Track every deal in one simple dashboard.
           </p>
+
+          {/* Sync Sources */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
+            <span className="text-sm text-gray-500">Sync leads from:</span>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {[
+                { name: 'WhatsApp', logo: '/logos/WhatsApp.png' },
+                { name: 'MagicBricks', logo: '/logos/Magicbricks.png' },
+                { name: '99acres', logo: '/logos/99acres.png' },
+                { name: 'Housing.com', logo: '/logos/Housing.png' },
+                { name: 'Meta Ads', logo: '/logos/Meta.png' },
+                { name: 'Google Ads', logo: '/logos/Google.png' },
+              ].map((source) => (
+                <div key={source.name} className="flex items-center gap-1.5 bg-white border rounded-full px-3 py-1.5 shadow-sm">
+                  <Image src={source.logo} alt={source.name} width={20} height={20} className="object-contain" />
+                  <span className="text-xs font-medium text-gray-700">{source.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
           
           {/* Waitlist Form - Inline */}
-          <div className="max-w-xl mx-auto mb-8">
+          <div className="max-w-md mx-auto mb-8">
             <div className="bg-white rounded-2xl shadow-xl border-2 border-orange-200 p-6">
               <div className="flex items-center justify-center gap-2 text-orange-600 font-semibold mb-4">
                 <Clock className="w-5 h-5" />
@@ -235,36 +255,27 @@ export function LandingPage() {
               
               <form onSubmit={handleTrialSubmit} className="space-y-3">
                 <Input
-                  placeholder="Your email address (Optional)"
-                  type="email"
-                  value={trialForm.email}
-                  onChange={(e) => setTrialForm({ ...trialForm, email: e.target.value })}
+                  placeholder="Your name *"
+                  value={trialForm.name}
+                  onChange={(e) => setTrialForm({ ...trialForm, name: e.target.value })}
                   className="h-12 text-base"
+                  required
                 />
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <Input
-                    placeholder="Your name"
-                    value={trialForm.name}
-                    onChange={(e) => setTrialForm({ ...trialForm, name: e.target.value })}
-                    className="h-12 text-base"
-                    required
-                  />
-                  <Input
-                    placeholder="Phone number *"
-                    type="tel"
-                    value={trialForm.phone}
-                    onChange={(e) => setTrialForm({ ...trialForm, phone: e.target.value })}
-                    className="h-12 text-base"
-                    required
-                  />
-                </div>
+                <Input
+                  placeholder="Phone number *"
+                  type="tel"
+                  value={trialForm.phone}
+                  onChange={(e) => setTrialForm({ ...trialForm, phone: e.target.value })}
+                  className="h-12 text-base"
+                  required
+                />
                 <Button 
                   type="submit" 
                   size="lg" 
                   className="w-full h-12 text-base bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-lg"
                   disabled={submitting}
                 >
-                  {submitting ? 'Joining...' : '🎁 Join Waitlist & Get 70% OFF'}
+                  {submitting ? 'Starting...' : '👉 Start Free Trial & Get 70% OFF'}
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </form>
@@ -309,6 +320,77 @@ export function LandingPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 2 - The Problem */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-sm font-medium mb-6">
+            <TrendingDown className="w-4 h-4" />
+            The Hard Truth
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
+            Most Real Estate Agents Lose 30–50% of Leads
+          </h2>
+          <p className="text-xl text-gray-400 mb-12">Because:</p>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+            {[
+              'They forget to follow up',
+              'Leads get buried in WhatsApp',
+              'No system to track hot vs cold prospects',
+              'No reminders for callbacks',
+              'No clear sales pipeline',
+            ].map((problem, index) => (
+              <div key={index} className="flex items-center gap-3 bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-left">
+                <XCircle className="w-5 h-5 text-red-400 shrink-0" />
+                <span className="text-gray-300">{problem}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-linear-to-r from-red-500/20 to-orange-500/20 border border-red-500/30 rounded-2xl p-6">
+            <p className="text-xl sm:text-2xl font-semibold text-white">
+              Every missed follow-up = <span className="text-red-400">lost commission.</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 3 - The Solution */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-linear-to-b from-slate-50 to-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium mb-6">
+            <Bot className="w-4 h-4" />
+            The Solution
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+            Meet Your AI Sales Assistant
+          </h2>
+          <p className="text-xl text-gray-600 mb-12">Your CRM automatically:</p>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
+            {[
+              'Captures leads from website, portals & ads',
+              'Sends instant WhatsApp replies',
+              'Follows up automatically until they respond',
+              'Reminds you to call hot leads',
+              'Scores leads (Hot / Warm / Cold)',
+              'Tracks your full sales pipeline',
+            ].map((solution, index) => (
+              <div key={index} className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl p-4 text-left">
+                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
+                <span className="text-gray-700 font-medium">{solution}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-linear-to-r from-primary/10 to-blue-500/10 border border-primary/20 rounded-2xl p-6">
+            <p className="text-xl sm:text-2xl font-semibold text-gray-900">
+              Everything in <span className="text-primary">one place.</span>
+            </p>
           </div>
         </div>
       </section>
@@ -466,7 +548,7 @@ export function LandingPage() {
               Limited Time Only
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Why Join the Waitlist Now?
+              Why Start Your Free Trial Now?
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               Early supporters get exclusive benefits that won&apos;t be available after launch.
@@ -547,7 +629,7 @@ export function LandingPage() {
                 Don&apos;t Miss 70% OFF Forever
               </h2>
               <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
-                Join the waitlist now and lock in early bird pricing before we launch. 
+                Start your free trial now and lock in early bird pricing before we launch. 
                 This offer won&apos;t be available after the first 100 users.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -612,7 +694,7 @@ export function LandingPage() {
       <Dialog open={showTrialModal} onOpenChange={setShowTrialModal}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-2xl">🎁 Join the Waitlist</DialogTitle>
+            <DialogTitle className="text-2xl">👉 Start Your Free Trial</DialogTitle>
             <DialogDescription>
               Lock in 70% OFF forever as an early bird! Only {100 - waitlistCount} spots remaining.
             </DialogDescription>
@@ -631,17 +713,6 @@ export function LandingPage() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address (Optional)</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                value={trialForm.email}
-                onChange={(e) => setTrialForm({ ...trialForm, email: e.target.value })}
-              />
-            </div>
-            
-            <div className="space-y-2">
               <Label htmlFor="phone">Phone Number <span className="text-red-500">*</span></Label>
               <Input
                 id="phone"
@@ -654,12 +725,12 @@ export function LandingPage() {
             </div>
             
             <Button type="submit" className="w-full bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600" size="lg" disabled={submitting}>
-              {submitting ? 'Joining...' : '🚀 Claim My Spot & 70% OFF'}
+              {submitting ? 'Starting...' : '� Start Free Trial & Get 70% OFF'}
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
             
             <p className="text-xs text-center text-gray-500">
-              We&apos;ll notify you when we launch. Unsubscribe anytime.
+              Start your 7-day free trial. No credit card required.
             </p>
           </form>
         </DialogContent>
