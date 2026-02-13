@@ -215,7 +215,7 @@ export function LandingPage() {
           </div>
           
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-          AI Real Estate CRM Software{' '}
+          AI Real Estate CRM Software.{' '}
           <span className="bg-linear-to-r from-primary to-blue-600 bg-clip-text text-transparent">Manage, Follow up, and Close Leads</span>
           </h1>
           
