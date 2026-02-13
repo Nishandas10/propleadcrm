@@ -30,7 +30,6 @@ import {
   Clock,
   Smartphone,
   Globe,
-  Play,
   ChevronRight,
   Sparkles,
   Bot,
@@ -216,8 +215,8 @@ export function LandingPage() {
           </div>
           
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-            Close 2X More Property Deals{' '}
-            <span className="bg-linear-to-r from-primary to-blue-600 bg-clip-text text-transparent">AI CRM for your Real Estate Business</span>
+          AI Real Estate CRM Software{' '}
+          <span className="bg-linear-to-r from-primary to-blue-600 bg-clip-text text-transparent">Manage, Follow up, and Close Leads</span>
           </h1>
           
           <p className="text-lg sm:text-xl text-gray-600 mb-4 max-w-3xl mx-auto leading-relaxed">
@@ -292,16 +291,38 @@ export function LandingPage() {
               </p>
             </div>
           </div>
+        </div>
 
-          <Button 
-            variant="outline" 
-            size="lg" 
-            onClick={handleGuestLogin}
-            className="text-base px-8 group"
-          >
-            <Play className="mr-2 w-4 h-4 group-hover:scale-110 transition-transform" />
-            Try Live Demo (No Signup)
-          </Button>
+        {/* Dashboard Mockup */}
+        <div className="w-full max-w-7xl mx-auto mt-12 sm:mt-16 px-2 sm:px-4">
+          <div className="relative">
+            {/* Decorative glow effect */}
+            <div className="absolute -inset-2 sm:-inset-6 bg-linear-to-r from-primary/20 via-blue-500/20 to-purple-500/20 rounded-2xl sm:rounded-3xl blur-2xl sm:blur-3xl opacity-60"></div>
+            
+            {/* Mockup image container */}
+            <div className="relative bg-white rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl border border-gray-200 overflow-hidden">
+              <div className="bg-gray-100 px-2 sm:px-4 py-2 sm:py-3 border-b flex items-center gap-2">
+                <div className="flex gap-1 sm:gap-1.5">
+                  <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-400"></div>
+                  <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-400"></div>
+                  <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-400"></div>
+                </div>
+                <div className="flex-1 flex justify-center">
+                  <div className="bg-white rounded-md px-2 sm:px-4 py-0.5 sm:py-1 text-[10px] sm:text-xs text-gray-500 border">
+                    app.proplead.com
+                  </div>
+                </div>
+              </div>
+              <Image
+                src="/mockup.jpg"
+                alt="PropLead Dashboard Preview"
+                width={1920}
+                height={1080}
+                className="w-full h-auto"
+                priority
+              />
+            </div>
+          </div>
         </div>
 
         {/* Early Bird Benefits */}
