@@ -217,7 +217,7 @@ export function LandingPage() {
           
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
             Close 2X More Property Deals{' '}
-            <span className="bg-linear-to-r from-primary to-blue-600 bg-clip-text text-transparent">The AI CRM for your Real Estate business</span>
+            <span className="bg-linear-to-r from-primary to-blue-600 bg-clip-text text-transparent">AI CRM for your Real Estate Business</span>
           </h1>
           
           <p className="text-lg sm:text-xl text-gray-600 mb-4 max-w-3xl mx-auto leading-relaxed">
